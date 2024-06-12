@@ -16,16 +16,19 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator myAnimator;
     private SpriteRenderer mySpriteRenderer;
+    private KnockBack knockback;
     private float startingMoveSpeed;
 
     private bool facingLeft = false;
     private bool isDashing = false;
+    
     private void Awake() {
         Instance = this;
         playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRenderer = GetComponent<SpriteRenderer>();
+        knockback = GetComponent<KnockBack>();
     }
 
     private void Start() {
@@ -56,6 +59,8 @@ public class PlayerController : MonoBehaviour
 
     // mover al jugador
     private void Move() {
+        if (knockback.GettingKnockedBack) { return; }
+
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 
