@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerControls playerControls;
     private Vector2 movement;
+    private Vector2 lookInput;
     private Rigidbody2D rb;
     private Animator myAnimator;
     private SpriteRenderer mySpriteRender;
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
 
     private bool facingLeft = false;
     private bool isDashing = false;
+    public bool gamepadConnected = false;
 
     private void Awake() {
         Instance = this;
@@ -35,10 +38,17 @@ public class PlayerController : MonoBehaviour
         playerControls.Combat.Dash.performed += _ => Dash();
 
         startingMoveSpeed = moveSpeed;
+
+        CheckForGamepad();
+        InputSystem.onDeviceChange += OnDeviceChange;
     }
 
     private void OnEnable() {
         playerControls.Enable();
+    }
+    
+    private void OnDisable() {
+        playerControls.Disable();
     }
 
     private void Update() {
@@ -52,6 +62,7 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerInput() {
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
+        lookInput = playerControls.Movement.Look.ReadValue<Vector2>();
 
         myAnimator.SetFloat("moveX", movement.x);
         myAnimator.SetFloat("moveY", movement.y);
@@ -64,15 +75,25 @@ public class PlayerController : MonoBehaviour
     }
 
     private void AdjustPlayerFacingDirection() {
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        if (gamepadConnected && lookInput != Vector2.zero) {
+            if (lookInput.x < 0) {
+                mySpriteRender.flipX = true;
+                facingLeft = true;
+            } else if (lookInput.x > 0) {
+                mySpriteRender.flipX = false;
+                facingLeft = false;
+            }
+        } else if (!gamepadConnected) {
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
 
-        if (mousePos.x < playerScreenPoint.x) {
-            mySpriteRender.flipX = true;
-            facingLeft = true;
-        } else {
-            mySpriteRender.flipX = false;
-            facingLeft = false;
+            if (mousePos.x < playerScreenPoint.x) {
+                mySpriteRender.flipX = true;
+                facingLeft = true;
+            } else {
+                mySpriteRender.flipX = false;
+                facingLeft = false;
+            }
         }
     }
 
@@ -93,5 +114,31 @@ public class PlayerController : MonoBehaviour
         myTrailRenderer.emitting = false;
         yield return new WaitForSeconds(dashCD);
         isDashing = false;
+    }
+
+    private void CheckForGamepad() {
+        gamepadConnected = Gamepad.current != null;
+        SetCursorState();
+    }
+
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change) {
+        if (device is Gamepad) {
+            if (change == InputDeviceChange.Added) {
+                gamepadConnected = true;
+            } else if (change == InputDeviceChange.Removed) {
+                gamepadConnected = false;
+            }
+            SetCursorState();
+        }
+    }
+
+    private void SetCursorState() {
+        if (gamepadConnected) {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        } else {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 }

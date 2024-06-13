@@ -17,6 +17,7 @@ public class Sword : MonoBehaviour
     private PlayerController playerController;
     private Weapon weapon;
     private bool attackButtonDown,  isAttacking = false;
+    private Vector2 lookInput;
 
     private void Awake() {
         Instance = this;
@@ -30,6 +31,10 @@ public class Sword : MonoBehaviour
         playerControls.Enable();
     }
 
+    private void OnDisable() {
+        playerControls.Disable();
+    }
+
     void Start()
     {
         playerControls.Combat.Attack.started += _ => StartAttacking();
@@ -37,8 +42,13 @@ public class Sword : MonoBehaviour
     }
 
     private void Update() {
-        MouseFollowWithOffset();
+        PlayerInput();
+        FollowWithOffset();
         Attack();
+    }
+
+    private void PlayerInput() {
+        lookInput = playerControls.Movement.Look.ReadValue<Vector2>();
     }
 
     private void StartAttacking() {
@@ -67,18 +77,30 @@ public class Sword : MonoBehaviour
         weaponCollider.gameObject.SetActive(false);
     }
 
-    private void MouseFollowWithOffset() {
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(playerController.transform.position);
+    private void FollowWithOffset() {
+        if (playerController.gamepadConnected && lookInput != Vector2.zero) {
+            float angle = Mathf.Atan2(0, lookInput.x) * Mathf.Rad2Deg;
 
-        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+            if (lookInput.x < 0) {
+                weapon.transform.rotation = Quaternion.Euler(0, -180, 0);
+                weaponCollider.transform.rotation = Quaternion.Euler(0, -180, 0);
+            } else {
+                weapon.transform.rotation = Quaternion.Euler(0, 0, 0);
+                weaponCollider.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }  
+        } else if (!playerController.gamepadConnected) {
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(playerController.transform.position);
 
-        if (mousePos.x < playerScreenPoint.x) {
-            weapon.transform.rotation = Quaternion.Euler(0, -180, angle);
-            weaponCollider.transform.rotation = Quaternion.Euler(0, -180, 0);
-        } else {
-            weapon.transform.rotation = Quaternion.Euler(0, 0, angle);
-            weaponCollider.transform.rotation = Quaternion.Euler(0, 0, 0);
+            float angle = Mathf.Atan2(0, mousePos.x) * Mathf.Rad2Deg;
+
+            if (mousePos.x < playerScreenPoint.x) {
+                weapon.transform.rotation = Quaternion.Euler(0, -180, angle);
+                weaponCollider.transform.rotation = Quaternion.Euler(0, -180, 0);
+            } else {
+                weapon.transform.rotation = Quaternion.Euler(0, 0, angle);
+                weaponCollider.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
         }
     }
 }
