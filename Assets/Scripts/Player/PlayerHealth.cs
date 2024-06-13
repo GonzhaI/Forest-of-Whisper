@@ -1,6 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private float knockBackTrhustAmount = 10f;
     [SerializeField] private float damageRecoveryTime = 1f;
+    [SerializeField] private TMP_Text healthText; // Campo para el texto de la vida del jugador
 
     private int currentHealth;
     private bool canTakeDamage = true;
@@ -24,6 +25,7 @@ public class PlayerHealth : MonoBehaviour
     private void Start() {
         isDead = false;
         currentHealth = maxHealth;
+        UpdateHealthText(); // Actualizar el texto al inicio
     }
 
     private void OnCollisionStay2D(Collision2D other) {
@@ -36,11 +38,12 @@ public class PlayerHealth : MonoBehaviour
 
     private void TakeDamage(int damageAmount, Transform hitTransform) {
         if (!canTakeDamage) { return; }
-        
+
         knockback.GetKnockedBack(hitTransform, knockBackTrhustAmount);
         StartCoroutine(flash.FlashRoutine());
         canTakeDamage = false;
         currentHealth -= damageAmount;
+        UpdateHealthText(); // Actualizar el texto después de recibir daño
         StartCoroutine(DamageRecoveryRoutine());
         CheckIfPlayerDeath();
     }
@@ -50,6 +53,7 @@ public class PlayerHealth : MonoBehaviour
             isDead = true;
             Destroy(Sword.Instance.gameObject);
             currentHealth = 0;
+            UpdateHealthText(); // Asegurarse de que el texto muestre "Haz muerto!"
             GetComponent<Animator>().SetTrigger(DEATH_HASH);
             Destroy(PlayerController.Instance.gameObject);
         }
@@ -58,5 +62,13 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator DamageRecoveryRoutine() {
         yield return new WaitForSeconds(damageRecoveryTime);
         canTakeDamage = true;
+    }
+
+    private void UpdateHealthText() {
+        if (currentHealth > 0) {
+            healthText.text = "" + currentHealth.ToString();
+        } else {
+            healthText.text = "Haz muerto!";
+        }
     }
 }

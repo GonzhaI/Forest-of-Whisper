@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int startingHealth = 3;
+    [SerializeField] private int scoreValue = 100; // Valor de puntaje que otorga este enemigo
 
     private int currentHealth;
     private Knockback knockback;
@@ -23,10 +24,14 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= damage;
         knockback.GetKnockedBack(PlayerController.Instance.transform, 15f);
         StartCoroutine(flash.FlashRoutine());
+        DetectDeath();
     }
 
     public void DetectDeath() {
         if (currentHealth <= 0) {
+            // Añadir puntos al puntaje
+            ScoreManager.instance.AddScore(scoreValue);
+            
             Destroy(gameObject);
         }
     }
