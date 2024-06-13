@@ -11,6 +11,8 @@ public class Sword : MonoBehaviour
     public static Sword Instance;
     [SerializeField] private Transform weaponCollider;
     [SerializeField] private float swordAttackCD = .5f;
+    [SerializeField] private AudioClip swordAttackAudioClip;
+    [SerializeField] private AudioSource swordAudioSource;
     
     private PlayerControls playerControls;
     private Animator myAnimator;
@@ -64,6 +66,12 @@ public class Sword : MonoBehaviour
             isAttacking = true;
             myAnimator.SetTrigger("Attack");
             weaponCollider.gameObject.SetActive(true);
+
+            if (swordAudioSource != null && swordAttackAudioClip != null) {
+                swordAudioSource.clip = swordAttackAudioClip;
+                swordAudioSource.Play();
+            }
+
             StartCoroutine(AttackCDRoutine());
         }
     }
