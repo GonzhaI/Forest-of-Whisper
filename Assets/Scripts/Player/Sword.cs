@@ -8,6 +8,7 @@ using UnityEngine.Timeline;
 
 public class Sword : MonoBehaviour
 {
+    public static Sword Instance;
     [SerializeField] private Transform weaponCollider;
     [SerializeField] private float swordAttackCD = .5f;
     
@@ -18,6 +19,7 @@ public class Sword : MonoBehaviour
     private bool attackButtonDown,  isAttacking = false;
 
     private void Awake() {
+        Instance = this;
         playerController = GetComponentInParent<PlayerController>();
         weapon = GetComponentInParent<Weapon>();
         myAnimator = GetComponent<Animator>();
