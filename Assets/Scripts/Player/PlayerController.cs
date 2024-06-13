@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float dashSpeed = 4f;
     [SerializeField] private TrailRenderer myTrailRenderer;
+    [SerializeField] private AudioClip dashAudioClip;
+    [SerializeField] private AudioSource dashAudioSource;
 
     private PlayerControls playerControls;
     private Vector2 movement;
@@ -100,6 +102,12 @@ public class PlayerController : MonoBehaviour
     private void Dash() {
         if (!isDashing) {
             isDashing = true;
+            
+            if (dashAudioSource != null && dashAudioClip != null) {
+                dashAudioSource.clip = dashAudioClip;
+                dashAudioSource.Play();
+            }
+
             moveSpeed *= dashSpeed;
             myTrailRenderer.emitting = true;
             StartCoroutine(EndDashRoutine());
