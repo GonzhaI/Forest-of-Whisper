@@ -1913,6 +1913,7 @@ GameObject:
   - component: {fileID: 1191385169}
   - component: {fileID: 1191385168}
   - component: {fileID: 1191385167}
+  - component: {fileID: 1191385170}
   m_Layer: 0
   m_Name: Boton_Iniciar
   m_TagString: Untagged
@@ -1983,7 +1984,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1191385168}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1191385170}
+        m_TargetAssemblyTypeName: IniciarJuego, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1191385168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2022,6 +2035,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1191385165}
   m_CullTransparentMesh: 1
+--- !u!114 &1191385170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191385165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52f148621d668ff4c857341f14109603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: Nivel1
 --- !u!1 &1207565202
 GameObject:
   m_ObjectHideFlags: 0
