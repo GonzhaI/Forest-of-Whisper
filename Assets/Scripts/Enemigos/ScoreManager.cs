@@ -6,6 +6,7 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager instance;
     public TMP_Text scoreText; // Cambiado a TMP_Text
     private int score = 0;
+    public CambioDeNivel door; // Referencia al script CambioDeNivel
 
     private void Awake()
     {
@@ -30,10 +31,19 @@ public class ScoreManager : MonoBehaviour
     {
         score += points;
         UpdateScoreText();
+        CheckDoorOpen(); // Verificar si se debe abrir la puerta
     }
 
     private void UpdateScoreText()
     {
         scoreText.text = "" + score.ToString();
+    }
+
+    private void CheckDoorOpen()
+    {
+        if (score >= 500 && door != null)
+        {
+            door.Open(); // Llamar al método Open() en el script CambioDeNivel
+        }
     }
 }
