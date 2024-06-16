@@ -80,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 680095453, guid: 5c5c70dc32070194387eb0f94e22e19d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -223,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 3
+  scoreValue: 100
 --- !u!114 &4551452360057652551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,5 +249,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5be3a5d1c5fbca4db894aa374fb202c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteFlashMat: {fileID: 2100000, guid: 406b4ce0cf4a69849a2a9bfb36296fa8, type: 2}
+  whiteFlashMat: {fileID: 2100000, guid: e11d23634452eb742bfabc5eb282ee8a, type: 2}
   restoreDefaultMatTime: 0.2

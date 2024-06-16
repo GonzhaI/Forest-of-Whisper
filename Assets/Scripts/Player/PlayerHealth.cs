@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -9,7 +11,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float knockBackTrhustAmount = 10f;
     [SerializeField] private float damageRecoveryTime = 1f;
     [SerializeField] private TMP_Text healthText; // Campo para el texto de la vida del jugador
+    [SerializeField] private AudioClip damageAudioClip;
+    [SerializeField] private AudioSource damageAudioSource;
 
+    public string sceneToLoad;
     private int currentHealth;
     private bool canTakeDamage = true;
     private Knockback knockback;
@@ -43,6 +48,12 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(flash.FlashRoutine());
         canTakeDamage = false;
         currentHealth -= damageAmount;
+
+        if (damageAudioSource != null && damageAudioClip != null) {
+            damageAudioSource.clip = damageAudioClip;
+            damageAudioSource.Play();
+        }
+
         UpdateHealthText(); // Actualizar el texto después de recibir daño
         StartCoroutine(DamageRecoveryRoutine());
         CheckIfPlayerDeath();
@@ -56,6 +67,7 @@ public class PlayerHealth : MonoBehaviour
             UpdateHealthText(); // Asegurarse de que el texto muestre "Haz muerto!"
             GetComponent<Animator>().SetTrigger(DEATH_HASH);
             Destroy(PlayerController.Instance.gameObject);
+            SceneManager.LoadScene(sceneToLoad);
         }
     }
 
