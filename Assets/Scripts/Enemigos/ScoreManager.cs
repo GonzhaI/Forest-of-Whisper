@@ -41,7 +41,7 @@ public class ScoreManager : MonoBehaviour
 
     private void CheckDoorOpen()
     {
-        if (score >= 500 && door != null)
+        if (score >= 2000 && door != null)
         {
             door.Open(); // Llamar al método Open() en el script CambioDeNivel
         }
