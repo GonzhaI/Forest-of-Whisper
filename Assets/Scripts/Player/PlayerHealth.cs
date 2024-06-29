@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -67,6 +66,7 @@ public class PlayerHealth : MonoBehaviour
             UpdateHealthText(); // Asegurarse de que el texto muestre "Haz muerto!"
             GetComponent<Animator>().SetTrigger(DEATH_HASH);
             Destroy(PlayerController.Instance.gameObject);
+            ScoreManager.instance.ResetScore(); // Reiniciar el puntaje cuando el jugador muere
             SceneManager.LoadScene(sceneToLoad);
         }
     }

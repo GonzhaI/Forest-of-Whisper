@@ -29,9 +29,11 @@ public class EnemyHealth : MonoBehaviour
 
     public void DetectDeath() {
         if (currentHealth <= 0) {
-            // Añadir puntos al puntaje
-            ScoreManager.instance.AddScore(scoreValue);
-            
+            // Añadir puntos al puntaje solo si ScoreManager.instance no es nulo
+            if (ScoreManager.instance != null)
+            {
+                ScoreManager.instance.AddScore(scoreValue);
+            }
             Destroy(gameObject);
         }
     }
