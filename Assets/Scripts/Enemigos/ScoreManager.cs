@@ -5,14 +5,12 @@ using UnityEngine.SceneManagement;
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
-    public TMP_Text scoreText; // TextMeshPro para mostrar el puntaje actual
-    public TMP_Text scoreLabelText; // TextMeshPro para el texto "Puntaje:"
+    public CambioDeNivel door;
     private int score = 0;
-    public CambioDeNivel door; // Referencia al script CambioDeNivel
+    private bool scoreInitialized = false;
 
     private void Awake()
     {
-        // Asegúrate de que solo hay una instancia de ScoreManager
         if (instance == null)
         {
             instance = this;
@@ -36,62 +34,54 @@ public class ScoreManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        FindScoreText();
+        FindDoorObject();
         UpdateScoreText();
     }
 
     private void Start()
     {
-        FindScoreText();
+        if (!scoreInitialized)
+        {
+            scoreInitialized = true;
+            // Inicializa el puntaje aquí si es necesario
+            // score = 0;
+        }
+
+        FindDoorObject();
         UpdateScoreText();
     }
 
-    private void FindScoreText()
+    private void FindDoorObject()
     {
-        if (scoreText == null)
-        {
-            scoreText = GameObject.Find("Puntaje").GetComponent<TMP_Text>();
-        }
-
-        if (scoreLabelText == null)
-        {
-            scoreLabelText = GameObject.Find("Texto_puntaje").GetComponent<TMP_Text>();
-        }
+        door = GameObject.FindObjectOfType<CambioDeNivel>();
     }
 
     public void AddScore(int points)
     {
         score += points;
         UpdateScoreText();
-        CheckDoorOpen(); // Verificar si se debe abrir la puerta
+        CheckDoorOpen();
+    }
+
+    public void ResetScore()
+    {
+        score = 0; // Reinicia el puntaje
+        UpdateScoreText(); // Asegúrate de actualizar el texto en caso de que se necesite
     }
 
     private void UpdateScoreText()
     {
-        // Asegúrate de que los textos se actualicen correctamente
-        if (scoreText != null)
+        if (TextManager.instance != null)
         {
-            scoreText.text = score.ToString();
-        }
-
-        if (scoreLabelText != null)
-        {
-            // Asegúrate de que el texto "Puntaje:" no se vea afectado
-            scoreLabelText.text = "Puntaje:";
+            TextManager.instance.UpdateScoreText(score);
         }
     }
 
     private void CheckDoorOpen()
     {
-        if (score >= 500 && door != null)
+        if (score >= 200 && door != null)
         {
-            door.Open(); // Llamar al método Open() en el script CambioDeNivel
+            door.Open();
         }
-    }
-
-    public void ResetScore()
-    {
-        score = 0;
-        UpdateScoreText();
     }
 }

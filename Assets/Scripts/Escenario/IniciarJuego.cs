@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class IniciarJuego : MonoBehaviour
@@ -9,6 +8,12 @@ public class IniciarJuego : MonoBehaviour
 
     public void LoadScene()
     {
-        SceneManager.LoadScene(sceneToLoad);
+        ScoreManager.instance.ResetScore(); // Reinicia el puntaje al iniciar la partida
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.ResetHealth(); // Reinicia las vidas al iniciar la partida
+        }
+        SceneManager.LoadScene(sceneToLoad); // Carga la escena especificada
     }
 }

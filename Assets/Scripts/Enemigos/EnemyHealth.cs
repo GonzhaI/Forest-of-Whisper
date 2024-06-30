@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
@@ -11,24 +9,29 @@ public class EnemyHealth : MonoBehaviour
     private Knockback knockback;
     private Flash flash;
 
-    private void Awake() {
+    private void Awake()
+    {
         flash = GetComponent<Flash>();
         knockback = GetComponent<Knockback>();
     }
 
-    private void Start() {
+    private void Start()
+    {
         currentHealth = startingHealth;
     }
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(int damage)
+    {
         currentHealth -= damage;
         knockback.GetKnockedBack(PlayerController.Instance.transform, 15f);
         StartCoroutine(flash.FlashRoutine());
         DetectDeath();
     }
 
-    public void DetectDeath() {
-        if (currentHealth <= 0) {
+    public void DetectDeath()
+    {
+        if (currentHealth <= 0)
+        {
             // Añadir puntos al puntaje solo si ScoreManager.instance no es nulo
             if (ScoreManager.instance != null)
             {

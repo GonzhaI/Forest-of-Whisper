@@ -2,45 +2,59 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PlayerHealth : MonoBehaviour
 {
     public bool isDead { get; private set; }
-    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int maxHealth = 3; // Valor inicial de vidas
     [SerializeField] private float knockBackTrhustAmount = 10f;
     [SerializeField] private float damageRecoveryTime = 1f;
-    [SerializeField] private TMP_Text healthText; // Campo para el texto de la vida del jugador
-    [SerializeField] private AudioClip damageAudioClip;
-    [SerializeField] private AudioSource damageAudioSource;
 
-    public string sceneToLoad;
     private int currentHealth;
     private bool canTakeDamage = true;
+    private bool canMove = true;
     private Knockback knockback;
     private Flash flash;
 
     readonly int DEATH_HASH = Animator.StringToHash("Death");
 
-    private void Awake() {
+    private void Awake()
+    {
         flash = GetComponent<Flash>();
         knockback = GetComponent<Knockback>();
-    }
 
-    private void Start() {
-        isDead = false;
+        // Inicializar currentHealth con maxHealth al inicio
         currentHealth = maxHealth;
-        UpdateHealthText(); // Actualizar el texto al inicio
     }
 
-    private void OnCollisionStay2D(Collision2D other) {
+    private void Start()
+    {
+        isDead = false;
+        UpdateHealthText();
+    }
+
+    private void OnDisable()
+    {
+        // Guardar las vidas al desactivar el script
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.playerHealth = currentHealth;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D other)
+    {
         EnemyAI enemy = other.gameObject.GetComponent<EnemyAI>();
 
-        if (enemy) {
+        if (enemy && canMove)
+        {
             TakeDamage(1, other.transform);
         }
     }
 
-    private void TakeDamage(int damageAmount, Transform hitTransform) {
+    private void TakeDamage(int damageAmount, Transform hitTransform)
+    {
         if (!canTakeDamage) { return; }
 
         knockback.GetKnockedBack(hitTransform, knockBackTrhustAmount);
@@ -48,39 +62,56 @@ public class PlayerHealth : MonoBehaviour
         canTakeDamage = false;
         currentHealth -= damageAmount;
 
-        if (damageAudioSource != null && damageAudioClip != null) {
-            damageAudioSource.clip = damageAudioClip;
-            damageAudioSource.Play();
-        }
-
-        UpdateHealthText(); // Actualizar el texto después de recibir daño
+        UpdateHealthText();
         StartCoroutine(DamageRecoveryRoutine());
         CheckIfPlayerDeath();
     }
 
-    private void CheckIfPlayerDeath() {
-        if (currentHealth <= 0 && !isDead) {
+    private void CheckIfPlayerDeath()
+    {
+        if (currentHealth <= 0 && !isDead)
+        {
             isDead = true;
-            Destroy(Sword.Instance.gameObject);
+            canMove = false;
             currentHealth = 0;
-            UpdateHealthText(); // Asegurarse de que el texto muestre "Haz muerto!"
+            UpdateHealthText();
+
             GetComponent<Animator>().SetTrigger(DEATH_HASH);
-            Destroy(PlayerController.Instance.gameObject);
-            ScoreManager.instance.ResetScore(); // Reiniciar el puntaje cuando el jugador muere
-            SceneManager.LoadScene(sceneToLoad);
+            StartCoroutine(DeathRoutine());
         }
     }
 
-    private IEnumerator DamageRecoveryRoutine() {
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth; // Reinicia las vidas al máximo
+        UpdateHealthText(); // Actualiza el texto de vidas
+
+        // Actualiza las vidas en el GameManager si está presente
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.playerHealth = currentHealth;
+        }
+    }
+
+    private IEnumerator DamageRecoveryRoutine()
+    {
         yield return new WaitForSeconds(damageRecoveryTime);
         canTakeDamage = true;
     }
 
-    private void UpdateHealthText() {
-        if (currentHealth > 0) {
-            healthText.text = "" + currentHealth.ToString();
-        } else {
-            healthText.text = "Haz muerto!";
+    private void UpdateHealthText()
+    {
+        if (TextManager.instance != null)
+        {
+            TextManager.instance.UpdateHealthText(currentHealth);
         }
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(4f);
+
+        // Cargar la escena de juego
+        SceneManager.LoadScene("Menu");
     }
 }
