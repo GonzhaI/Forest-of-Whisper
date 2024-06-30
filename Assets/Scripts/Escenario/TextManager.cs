@@ -42,7 +42,7 @@ public class TextManager : MonoBehaviour
         SetScoreLabelText();
 
         // Actualizar el texto de las vidas al cargar la escena
-        UpdateHealthText(GameManager.instance.playerHealth);
+        UpdateHealthText(PlayerPrefs.GetInt("PlayerHealth", 3)); // Obtener vidas guardadas o usar 3 por defecto
     }
 
     private void FindTextObjects()
