@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,16 +26,24 @@ public class PlayerController : MonoBehaviour
     private bool isDashing = false;
     public bool gamepadConnected = false;
 
-    private void Awake() {
+    // Referencia al script PlayerHealth
+    private PlayerHealth playerHealth;
+
+    private void Awake()
+    {
         Instance = this;
         playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRender = GetComponent<SpriteRenderer>();
         knockback = GetComponent<Knockback>();
+
+        // Obtener la referencia a PlayerHealth
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
-    private void Start() {
+    private void Start()
+    {
         playerControls.Combat.Dash.performed += _ => Dash();
 
         startingMoveSpeed = moveSpeed;
@@ -45,24 +52,34 @@ public class PlayerController : MonoBehaviour
         InputSystem.onDeviceChange += OnDeviceChange;
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         playerControls.Enable();
     }
     
-    private void OnDisable() {
+    private void OnDisable()
+    {
         playerControls.Disable();
     }
 
-    private void Update() {
+    private void Update()
+    {
         PlayerInput();
     }
 
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         AdjustPlayerFacingDirection();
-        Move();
+
+        // Verificar si el jugador puede moverse antes de aplicar el movimiento
+        if (!playerHealth.isDead)
+        {
+            Move();
+        }
     }
 
-    private void PlayerInput() {
+    private void PlayerInput()
+    {
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
         lookInput = playerControls.Movement.Look.ReadValue<Vector2>();
 
@@ -70,40 +87,54 @@ public class PlayerController : MonoBehaviour
         myAnimator.SetFloat("moveY", movement.y);
     }
 
-    private void Move() {
+    private void Move()
+    {
         if (knockback.gettingKnockedBack) { return; }
 
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 
-    private void AdjustPlayerFacingDirection() {
-        if (gamepadConnected && lookInput != Vector2.zero) {
-            if (lookInput.x < 0) {
+    private void AdjustPlayerFacingDirection()
+    {
+        if (gamepadConnected && lookInput != Vector2.zero)
+        {
+            if (lookInput.x < 0)
+            {
                 mySpriteRender.flipX = true;
                 facingLeft = true;
-            } else if (lookInput.x > 0) {
+            }
+            else if (lookInput.x > 0)
+            {
                 mySpriteRender.flipX = false;
                 facingLeft = false;
             }
-        } else if (!gamepadConnected) {
+        }
+        else if (!gamepadConnected)
+        {
             Vector3 mousePos = Input.mousePosition;
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
 
-            if (mousePos.x < playerScreenPoint.x) {
+            if (mousePos.x < playerScreenPoint.x)
+            {
                 mySpriteRender.flipX = true;
                 facingLeft = true;
-            } else {
+            }
+            else
+            {
                 mySpriteRender.flipX = false;
                 facingLeft = false;
             }
         }
     }
 
-    private void Dash() {
-        if (!isDashing) {
+    private void Dash()
+    {
+        if (!isDashing)
+        {
             isDashing = true;
             
-            if (dashAudioSource != null && dashAudioClip != null) {
+            if (dashAudioSource != null && dashAudioClip != null)
+            {
                 dashAudioSource.clip = dashAudioClip;
                 dashAudioSource.Play();
             }
@@ -114,7 +145,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator EndDashRoutine() {
+    private IEnumerator EndDashRoutine()
+    {
         float dashTime = .2f;
         float dashCD = .25f;
         yield return new WaitForSeconds(dashTime);
@@ -124,27 +156,37 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
     }
 
-    private void CheckForGamepad() {
+    private void CheckForGamepad()
+    {
         gamepadConnected = Gamepad.current != null;
         SetCursorState();
     }
 
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change) {
-        if (device is Gamepad) {
-            if (change == InputDeviceChange.Added) {
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        if (device is Gamepad)
+        {
+            if (change == InputDeviceChange.Added)
+            {
                 gamepadConnected = true;
-            } else if (change == InputDeviceChange.Removed) {
+            }
+            else if (change == InputDeviceChange.Removed)
+            {
                 gamepadConnected = false;
             }
             SetCursorState();
         }
     }
 
-    private void SetCursorState() {
-        if (gamepadConnected) {
+    private void SetCursorState()
+    {
+        if (gamepadConnected)
+        {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-        } else {
+        }
+        else
+        {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
