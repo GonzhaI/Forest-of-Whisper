@@ -24,8 +24,8 @@ public class PlayerHealth : MonoBehaviour
         flash = GetComponent<Flash>();
         knockback = GetComponent<Knockback>();
 
-        // Inicializar currentHealth con maxHealth al inicio
-        currentHealth = maxHealth;
+        // Cargar las vidas guardadas o inicializar con el valor máximo
+        currentHealth = PlayerPrefs.GetInt("PlayerHealth", maxHealth);
     }
 
     private void Start()
@@ -36,10 +36,10 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnDisable()
     {
-        // Guardar las vidas al desactivar el script
-        if (GameManager.instance != null)
+        // Guardar las vidas al desactivar el script, solo si no está muerto
+        if (!isDead)
         {
-            GameManager.instance.playerHealth = currentHealth;
+            PlayerPrefs.SetInt("PlayerHealth", currentHealth);
         }
     }
 
@@ -85,12 +85,6 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth; // Reinicia las vidas al máximo
         UpdateHealthText(); // Actualiza el texto de vidas
-
-        // Actualiza las vidas en el GameManager si está presente
-        if (GameManager.instance != null)
-        {
-            GameManager.instance.playerHealth = currentHealth;
-        }
     }
 
     private IEnumerator DamageRecoveryRoutine()
@@ -109,7 +103,13 @@ public class PlayerHealth : MonoBehaviour
 
     private IEnumerator DeathRoutine()
     {
+        // Llama a DisableMovement en PlayerController
+        PlayerController.Instance.DisableMovement();
+
         yield return new WaitForSeconds(4f);
+
+        // Habilitar el mouse después de 4 segundos
+        PlayerController.Instance.EnableMouse();
 
         // Cargar la escena de juego
         SceneManager.LoadScene("Menu");

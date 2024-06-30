@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
     {
         playerControls.Enable();
     }
-    
+
     private void OnDisable()
     {
         playerControls.Disable();
@@ -75,6 +75,10 @@ public class PlayerController : MonoBehaviour
         if (!playerHealth.isDead)
         {
             Move();
+        }
+        else
+        {
+            DisableMovement();
         }
     }
 
@@ -190,5 +194,29 @@ public class PlayerController : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
+    }
+
+    public void DisableMovement()
+    {
+        // Desactivar input del jugador
+        playerControls.Disable();
+
+        // Desactivar el mouse
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        // Activar isTrigger en el collider del jugador
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        if (playerCollider != null)
+        {
+            playerCollider.isTrigger = true;
+        }
+    }
+
+    public void EnableMouse()
+    {
+        // Habilitar el mouse
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 }
