@@ -40,7 +40,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    private void TakeDamage(int damageAmount, Transform hitTransform) {
+    public void TakeDamage(int damageAmount, Transform hitTransform) {
         if (!canTakeDamage) { return; }
 
         knockback.GetKnockedBack(hitTransform, knockBackTrhustAmount);

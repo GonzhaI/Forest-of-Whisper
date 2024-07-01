@@ -34,7 +34,20 @@ public class EnemyHealth : MonoBehaviour
             {
                 ScoreManager.instance.AddScore(scoreValue);
             }
-            Destroy(gameObject);
+            
+            Demon demon = GetComponent<Demon>();
+            if (demon != null)
+            {
+                demon.Die();
+            }
+            else
+            {
+                Destroy(gameObject); // Si no hay un DemonBoss, destruir el objeto
+            }
         }
+    }
+
+    public int GetCurrentHealth() {
+        return currentHealth;
     }
 }
