@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5771905467585857482}
   - component: {fileID: 7649986186332969578}
   - component: {fileID: 5338581646061732698}
+  - component: {fileID: 4869492075957161864}
   m_Layer: 0
   m_Name: DemonioVolador
   m_TagString: Untagged
@@ -33,13 +34,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465178318812190656}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1055.7701, y: -772.9294, z: -10.987094}
+  m_LocalRotation: {x: -0, y: -0.99984777, z: 0, w: -0.017452264}
+  m_LocalPosition: {x: -1059.58, y: -777.24, z: -5.493547}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -182, z: 0}
 --- !u!212 &5627737622596413976
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -210,6 +211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
+  followDistance: 5
+  randomMoveDirection: {x: 1, y: 0}
 --- !u!114 &5771905467585857482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,3 +254,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingHealth: 3
   scoreValue: 100
+--- !u!114 &4869492075957161864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465178318812190656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ce28b804784bb4999d1e6d47908847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

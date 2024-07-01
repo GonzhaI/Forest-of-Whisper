@@ -92,10 +92,10 @@ public class ScoreManager : MonoBehaviour
         switch (sceneName)
         {
             case "Nivel1":
-                pointsNeeded = 200;
+                pointsNeeded = 1500;
                 break;
             case "Nivel2":
-                pointsNeeded = 400;
+                pointsNeeded = 3000;
                 break;
             default:
                 pointsNeeded = 200; // Valor predeterminado, ajusta según sea necesario
