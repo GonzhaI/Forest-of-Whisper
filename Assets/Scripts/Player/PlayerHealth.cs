@@ -56,6 +56,18 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("DemonSword"))
+        {
+            // Obtener el componente de daño del Demon
+            Demon demon = other.GetComponentInParent<Demon>();
+
+            // Aplicar el daño al jugador
+            TakeDamage(demon.attackDamage, other.transform);
+        }
+    }
+
     private void TakeDamage(int damageAmount, Transform hitTransform)
     {
         if (!canTakeDamage) { return; }

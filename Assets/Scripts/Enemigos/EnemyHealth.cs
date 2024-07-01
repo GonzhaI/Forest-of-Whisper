@@ -28,16 +28,27 @@ public class EnemyHealth : MonoBehaviour
         DetectDeath();
     }
 
-    public void DetectDeath()
-    {
-        if (currentHealth <= 0)
-        {
+    public void DetectDeath() {
+        if (currentHealth <= 0) {
             // Añadir puntos al puntaje solo si ScoreManager.instance no es nulo
             if (ScoreManager.instance != null)
             {
                 ScoreManager.instance.AddScore(scoreValue);
             }
-            Destroy(gameObject);
+
+            Demon demon = GetComponent<Demon>();
+            if (demon != null)
+            {
+                demon.Die();
+            }
+            else
+            {
+                Destroy(gameObject); // Si no hay un DemonBoss, destruir el objeto
+            }
         }
+    }
+
+    public int GetCurrentHealth() {
+        return currentHealth;
     }
 }
