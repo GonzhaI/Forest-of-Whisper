@@ -8,8 +8,11 @@ public class PlayerHealth : MonoBehaviour
 {
     public bool isDead { get; private set; }
     [SerializeField] private int maxHealth = 3; // Valor inicial de vidas
-    [SerializeField] private float knockBackTrhustAmount = 10f;
+    [SerializeField] private float knockBackThrustAmount = 10f;
     [SerializeField] private float damageRecoveryTime = 1f;
+    [SerializeField] private AudioClip damageAudioClip; // Agrega el clip de audio
+    [SerializeField] private AudioSource damageAudioSource; // Agrega el AudioSource
+    [SerializeField] private GameObject sword; // Agrega la referencia a la espada
 
     private int currentHealth;
     private bool canTakeDamage = true;
@@ -57,10 +60,17 @@ public class PlayerHealth : MonoBehaviour
     {
         if (!canTakeDamage) { return; }
 
-        knockback.GetKnockedBack(hitTransform, knockBackTrhustAmount);
+        knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
         StartCoroutine(flash.FlashRoutine());
         canTakeDamage = false;
         currentHealth -= damageAmount;
+
+        // Reproducir el sonido de daño
+        if (damageAudioSource != null && damageAudioClip != null)
+        {
+            damageAudioSource.clip = damageAudioClip;
+            damageAudioSource.Play();
+        }
 
         UpdateHealthText();
         StartCoroutine(DamageRecoveryRoutine());
@@ -75,6 +85,12 @@ public class PlayerHealth : MonoBehaviour
             canMove = false;
             currentHealth = 0;
             UpdateHealthText();
+
+            // Desactivar la espada
+            if (sword != null)
+            {
+                sword.SetActive(false);
+            }
 
             GetComponent<Animator>().SetTrigger(DEATH_HASH);
             StartCoroutine(DeathRoutine());
