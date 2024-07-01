@@ -84,11 +84,30 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerInput()
     {
-        movement = playerControls.Movement.Move.ReadValue<Vector2>();
+        if (playerHealth.isDead)
+        {
+            // Si el jugador está muerto, no se toma ninguna entrada de movimiento
+            movement = Vector2.zero;
+        }
+        else
+        {
+            movement = playerControls.Movement.Move.ReadValue<Vector2>();
+        }
+
         lookInput = playerControls.Movement.Look.ReadValue<Vector2>();
 
         myAnimator.SetFloat("moveX", movement.x);
         myAnimator.SetFloat("moveY", movement.y);
+
+        // Desactivar el ataque cuando el jugador está muerto
+        if (playerHealth.isDead)
+        {
+            playerControls.Combat.Attack.Disable();
+        }
+        else
+        {
+            playerControls.Combat.Attack.Enable();
+        }
     }
 
     private void Move()
@@ -136,7 +155,7 @@ public class PlayerController : MonoBehaviour
         if (!isDashing)
         {
             isDashing = true;
-            
+
             if (dashAudioSource != null && dashAudioClip != null)
             {
                 dashAudioSource.clip = dashAudioClip;
@@ -200,6 +219,9 @@ public class PlayerController : MonoBehaviour
     {
         // Desactivar input del jugador
         playerControls.Disable();
+
+        // Desactivar el ataque cuando el jugador está muerto
+        playerControls.Combat.Attack.Disable();
 
         // Desactivar el mouse
         Cursor.visible = false;

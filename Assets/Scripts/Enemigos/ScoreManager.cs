@@ -8,6 +8,7 @@ public class ScoreManager : MonoBehaviour
     public CambioDeNivel door;
     private int score = 0;
     private bool scoreInitialized = false;
+    private int pointsNeeded = 200; // Puntos necesarios para abrir la puerta
 
     private void Awake()
     {
@@ -35,6 +36,7 @@ public class ScoreManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         FindDoorObject();
+        UpdatePointsNeeded(scene.name);
         UpdateScoreText();
     }
 
@@ -79,9 +81,25 @@ public class ScoreManager : MonoBehaviour
 
     private void CheckDoorOpen()
     {
-        if (score >= 200 && door != null)
+        if (score >= pointsNeeded && door != null)
         {
             door.Open();
+        }
+    }
+
+    private void UpdatePointsNeeded(string sceneName)
+    {
+        switch (sceneName)
+        {
+            case "Nivel1":
+                pointsNeeded = 200;
+                break;
+            case "Nivel2":
+                pointsNeeded = 400;
+                break;
+            default:
+                pointsNeeded = 200; // Valor predeterminado, ajusta según sea necesario
+                break;
         }
     }
 }
